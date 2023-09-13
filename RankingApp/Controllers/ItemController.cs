@@ -33,7 +33,7 @@ namespace RankingApp.Controllers
 
         };
 
-
+        [HttpGet("{itemType:int}")]
         public ItemModel[] Get(int itemType)
         {
             ItemModel[] items = Items.Where(i => i.ItemType == itemType).ToArray();
