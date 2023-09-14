@@ -39,7 +39,7 @@ const RankItems = () => {
 
     return (
         <main>
-            <RankingGrid items={items} imgArr={MovieImageArr} />
+            <RankingGrid items={items} imgArr={MovieImageArr} drag={drag} allowDrop={drop} drop={drop} />
             <div className="items-not-ranked">
                 {(items.length > 0) ? items.map(item =>
                     <div className="unranked-cell">
