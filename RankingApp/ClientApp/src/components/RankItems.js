@@ -44,15 +44,17 @@ const RankItems = () => {
             <RankingGrid items={items} imgArr={MovieImageArr} drag={drag} allowDrop={allowDrop} drop={drop} />
             <div className="items-not-ranked">
                 {(items.length > 0) ? items.map(item =>
-                    <div className="unranked-cell">
-                        <img
-                            id={`item-${item.id}`}
-                            src={MovieImageArr.find(m => m.id === item.imageId)?.image}
-                            style={{ cursor: "pointer" }}
-                            draggable="true"
-                            onDragStart={drag}>
-                        </img>
-                    </div>
+                    (item.ranking === 0) ?
+                        <div className="unranked-cell">
+                            <img
+                                id={`item-${item.id}`}
+                                src={MovieImageArr.find(m => m.id === item.imageId)?.image}
+                                style={{ cursor: "pointer" }}
+                                draggable="true"
+                                onDragStart={drag}>
+                            </img>
+                        </div> : null
+
                 ) : <div>loading ...</div>}
             </div>
         </main>
