@@ -12,14 +12,14 @@ const RankingGrid = ({ items, imgArr, drag, allowDrop, drop }) => {
             let item = items.find(i => i.ranking === rankNum);
             cellCollection.push(
                 <div id={`rank-${rankNum}`} className="rank-cell" onDrop={drop} onDragOver={allowDrop}>
-                    {item != null
-                        &&
+                    {(item != null)
+                        ?
                         <img
                             id={`item-${item.id}`}
                             src={imgArr.find(i => i.id === item.imageId)?.image}
-                            draggable='true'
+                            draggable="true"
                             onDragStart={drag}>
-                        </img>}
+                        </img> : null}
                 </div>
 
             )
