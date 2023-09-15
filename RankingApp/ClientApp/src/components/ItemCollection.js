@@ -2,7 +2,7 @@
 import Item from './Item';
 
 const ItemCollection = ({ items, drag, imgArr }) => {
-
+    console.log('from itemCollection', imgArr, items)
     return (
         <div className="items-not-ranked">
             {

@@ -10,8 +10,6 @@ const RankItemsContainer = ({ dataType, imgArr }) => {
     const [albumItems, setAlbumItems] = useState(JSON.parse(localStorage.getItem(albumLocalStorageKey)));
     const [movieItems, setMovieItems] = useState(JSON.parse(localStorage.getItem(movieLocalStorageKey)));
 
-
-
     var data = [];
     var setFunc = null;
 
