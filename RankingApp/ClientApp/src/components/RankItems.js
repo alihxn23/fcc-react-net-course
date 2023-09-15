@@ -1,6 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
 import ItemCollection from './ItemCollection';
-import MovieImageArr from './MovieImages';
 import RankingGrid from './RankingGrid';
 
 const RankItems = ({ items, setItems, dataType, imgArr, localStorageKey }) => {
@@ -37,7 +36,7 @@ const RankItems = ({ items, setItems, dataType, imgArr, localStorageKey }) => {
 
     }, [dataType]);
 
-    const getDataFromApi = async () => {
+    const getDataFromApi = () => {
         fetch(`item/${dataType}`)
             .then((results) => {
                 return results.json();
@@ -57,7 +56,7 @@ const RankItems = ({ items, setItems, dataType, imgArr, localStorageKey }) => {
     return (
         (items != null) ? 
         <main>
-            <RankingGrid items={items} imgArr={MovieImageArr} drag={drag} allowDrop={allowDrop} drop={drop} />
+            <RankingGrid items={items} imgArr={imgArr} drag={drag} allowDrop={allowDrop} drop={drop} />
             <ItemCollection items={items} drag={drag} imgArr={imgArr} />
         </main>
         : <main>Loading...</main>

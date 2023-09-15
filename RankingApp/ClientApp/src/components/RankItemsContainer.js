@@ -1,7 +1,7 @@
 ﻿import { useState } from 'react';
 import RankItems from './RankItems';
 
-const RankItemsContainer = ({ dataType, imgArr }) => {
+const RankItemsContainer = ({dataType, imgArr }) => {
     const albumLocalStorageKey = "albums";
     const movieLocalStorageKey = "movies";
 
@@ -9,6 +9,8 @@ const RankItemsContainer = ({ dataType, imgArr }) => {
 
     const [albumItems, setAlbumItems] = useState(JSON.parse(localStorage.getItem(albumLocalStorageKey)));
     const [movieItems, setMovieItems] = useState(JSON.parse(localStorage.getItem(movieLocalStorageKey)));
+
+
 
     var data = [];
     var setFunc = null;
@@ -27,7 +29,7 @@ const RankItemsContainer = ({ dataType, imgArr }) => {
     }
 
     return (
-        <RankItems items={data} setItems={setFunc} dataType={dataType} imgArr={imgArr} localStorageKey={localStorageKey} />
+        <RankItems items={data} setItems={setFunc} dataType={dataType} imgArr={imgArr} localStorageKey={localStorageKey } />    
     )
 
 
