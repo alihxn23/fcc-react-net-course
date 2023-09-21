@@ -63,6 +63,52 @@ namespace RankingApp.Controllers
             return Ok(await _context.Items.ToListAsync());
         }
 
+        [HttpPut("{id}")]
+        public async Task<ActionResult<ItemModel>> UpdateItem(int id, ItemModel item)
+        {
+            //var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == item.Id);
+
+            //if(i == null)
+            //{
+            //    return BadRequest("data not found");
+            //}
+
+            //i.ImageId = item.ImageId;
+            //i.Ranking = item.Ranking;
+            //i.ItemType = item.ItemType;
+
+            //_context.Items.Update(i);
+            //await _context.SaveChangesAsync();
+
+            //var changedItem = await _context.Items.FindAsync(i.Id);
+            //return Ok(changedItem);
+
+
+            if (id != item.Id)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(item).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!(_context.Items?.Any(e => e.Id == id)).GetValueOrDefault())
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
 
     }
 }

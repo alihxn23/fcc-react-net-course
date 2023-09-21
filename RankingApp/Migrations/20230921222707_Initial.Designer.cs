@@ -10,7 +10,7 @@ using RankingApp;
 namespace RankingApp.Migrations
 {
     [DbContext(typeof(ItemContext))]
-    [Migration("20230921213001_Initial")]
+    [Migration("20230921222707_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
