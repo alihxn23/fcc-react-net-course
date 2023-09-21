@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RankingApp.Models;
 
 namespace RankingApp.Controllers
@@ -8,6 +9,13 @@ namespace RankingApp.Controllers
 
     public class ItemController : ControllerBase
     {
+        private readonly ItemContext _context;
+
+        public ItemController(ItemContext context)
+        {
+            _context = context;
+        }
+
         private static readonly IEnumerable<ItemModel> Items = new[]
         {
             new ItemModel{Id =1, Title = "The Godfather", ImageId=1, Ranking=0,ItemType=1 },
@@ -39,6 +47,15 @@ namespace RankingApp.Controllers
             ItemModel[] items = Items.Where(i => i.ItemType == itemType).ToArray();
             //Thread.Sleep(2000);
             return Ok(items);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<ItemModel[]>> AddItem(ItemModel item)
+        {
+            _context.Items.Add(item);
+            await _context.SaveChangesAsync();
+
+            return Ok(await _context.Items.ToListAsync());
         }
     }
 }
