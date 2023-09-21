@@ -4,10 +4,10 @@ using RankingApp.Models;
 namespace RankingApp.Controllers
 {
     [ApiController]
-	[Route("[controller]")]
+    [Route("[controller]")]
 
     public class ItemController : ControllerBase
-	{
+    {
         private static readonly IEnumerable<ItemModel> Items = new[]
         {
             new ItemModel{Id =1, Title = "The Godfather", ImageId=1, Ranking=0,ItemType=1 },
@@ -34,11 +34,11 @@ namespace RankingApp.Controllers
         };
 
         [HttpGet("{itemType:int}")]
-        public ItemModel[] Get(int itemType)
+        public async Task<ActionResult<ItemModel[]>> Get(int itemType)
         {
             ItemModel[] items = Items.Where(i => i.ItemType == itemType).ToArray();
             //Thread.Sleep(2000);
-            return items;
+            return Ok(items);
         }
     }
 }
