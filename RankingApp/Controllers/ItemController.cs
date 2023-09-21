@@ -44,8 +44,13 @@ namespace RankingApp.Controllers
         [HttpGet("{itemType:int}")]
         public async Task<ActionResult<ItemModel[]>> Get(int itemType)
         {
-            ItemModel[] items = Items.Where(i => i.ItemType == itemType).ToArray();
+            //ItemModel[] items = Items.Where(i => i.ItemType == itemType).ToArray();
             //Thread.Sleep(2000);
+            var items = await _context.Items.Where(x => x.ItemType == itemType).ToListAsync();
+            if(items.Count == 0)
+            {
+                return BadRequest("no data found");
+            }
             return Ok(items);
         }
 
@@ -57,6 +62,8 @@ namespace RankingApp.Controllers
 
             return Ok(await _context.Items.ToListAsync());
         }
+
+
     }
 }
 
