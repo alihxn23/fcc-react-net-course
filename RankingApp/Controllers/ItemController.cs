@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RankingApp.Models;
 
@@ -10,11 +11,18 @@ namespace RankingApp.Controllers
     public class ItemController : ControllerBase
     {
         private readonly ItemContext _context;
+        private readonly IMapper _mapper;
 
-        public ItemController(ItemContext context)
+        public ItemController(ItemContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
+
+        // public ItemController(IMapper mapper)
+        // {
+        //     _mapper = mapper;
+        // }
 
         // private static readonly IEnumerable<ItemModel> Items = new[]
         // {
@@ -42,7 +50,7 @@ namespace RankingApp.Controllers
         // };
 
         [HttpGet("{itemType:int}")]
-        public async Task<ActionResult<ItemModel[]>> Get(int itemType)
+        public async Task<IActionResult> Get(int itemType)
         {
             //ItemModel[] items = Items.Where(i => i.ItemType == itemType).ToArray();
             //Thread.Sleep(2000);
@@ -51,6 +59,7 @@ namespace RankingApp.Controllers
             {
                 return BadRequest("no data found");
             }
+            // return Ok(_mapper.Map<UpdateItemDto[]>(items));
             return Ok(items);
         }
 
@@ -63,10 +72,21 @@ namespace RankingApp.Controllers
             return Ok(await _context.Items.ToListAsync());
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<ItemModel>> UpdateItem(int id, ItemModel item)
+        [HttpPut]
+        public async Task<ActionResult<ItemModel>> UpdateItem(UpdateItemDto item)
         {
-            //var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == item.Id);
+            var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == item.Id);
+            if (i == null)
+            {
+                return BadRequest("item not found");
+            }
+            i.Ranking = item.Ranking;
+            _context.Entry(i).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return Ok(i);
+            // var a = _mapper.Map<ItemModel>(item);
+            // return Ok(a);
+            // return _mapper.Map<ItemModel>(item);
 
             //if(i == null)
             //{
@@ -84,30 +104,30 @@ namespace RankingApp.Controllers
             //return Ok(changedItem);
 
 
-            if (id != item.Id)
-            {
-                return BadRequest();
-            }
+            // if (id != item.Id)
+            // {
+            //     return BadRequest();
+            // }
 
-            _context.Entry(item).State = EntityState.Modified;
+            // _context.Entry(item).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!(_context.Items?.Any(e => e.Id == id)).GetValueOrDefault())
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            // try
+            // {
+            //     await _context.SaveChangesAsync();
+            // }
+            // catch (DbUpdateConcurrencyException)
+            // {
+            //     if (!(_context.Items?.Any(e => e.Id == id)).GetValueOrDefault())
+            //     {
+            //         return NotFound();
+            //     }
+            //     else
+            //     {
+            //         throw;
+            //     }
+            // }
 
-            return item;
+            // return item;
         }
 
         [HttpDelete("{itemType:int}")]

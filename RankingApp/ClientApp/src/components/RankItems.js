@@ -31,7 +31,8 @@ const RankItems = ({ items, setItems, dataType, imgArr, localStorageKey }) => {
       const rank = parseInt(targetElm.id.substring(5));
       const item = items.find((i) => i.id === parseInt(data));
 
-      let changedItem = { ...item, ranking: rank };
+      let changedItem = { id: item.id, ranking: rank };
+      console.log("from put method", changedItem);
 
       var myHeaders = new Headers();
       myHeaders.append("accept", "text/plain");
@@ -46,7 +47,7 @@ const RankItems = ({ items, setItems, dataType, imgArr, localStorageKey }) => {
         redirect: "follow",
       };
 
-      fetch(`https://localhost:7153/Item/${item.id}`, requestOptions)
+      fetch(`https://localhost:7153/Item`, requestOptions)
         .then((response) => response.json())
         .then((result) => {
           console.log(result);
