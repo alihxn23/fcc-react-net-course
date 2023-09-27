@@ -81,7 +81,8 @@ namespace RankingApp.Controllers
             {
                 return BadRequest("item not found");
             }
-            i.Ranking = item.Ranking;
+            // i.Ranking = item.Ranking;
+            _mapper.Map<UpdateItemDto, ItemModel>(item, i);
             var validator = new ItemControllerValidator();
             ValidationResult result = validator.Validate(i);
             Console.WriteLine(i.Ranking);
