@@ -1,12 +1,20 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+using RankingApp.Controllers;
+using RankingApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+// .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ItemControllerValidator>());
+builder.Services.AddScoped<IValidator<ItemModel>, ItemControllerValidator>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+
 
 builder.Services.AddAutoMapper(typeof(Program));
 

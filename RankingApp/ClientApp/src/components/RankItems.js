@@ -73,9 +73,9 @@ const RankItems = ({ items, setItems, dataType, imgArr, localStorageKey }) => {
   };
 
   useEffect(() => {
-    if (items == null) {
-      getDataFromApi();
-    }
+    // if (items == null) {
+    getDataFromApi();
+    // }
   }, [dataType]);
 
   const getDataFromApi = () => {

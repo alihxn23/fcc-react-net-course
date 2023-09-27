@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RankingApp.Models;
@@ -81,6 +82,14 @@ namespace RankingApp.Controllers
                 return BadRequest("item not found");
             }
             i.Ranking = item.Ranking;
+            var validator = new ItemControllerValidator();
+            ValidationResult result = validator.Validate(i);
+            Console.WriteLine(i.Ranking);
+            // return Ok(result);
+            if (!result.IsValid)
+            {
+                return BadRequest(result.Errors);
+            }
             _context.Entry(i).State = EntityState.Modified;
             await _context.SaveChangesAsync();
             return Ok(i);
