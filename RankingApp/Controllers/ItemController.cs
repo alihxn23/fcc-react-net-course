@@ -83,7 +83,10 @@ namespace RankingApp.Controllers
             // await _context.SaveChangesAsync();
 
             // return Ok(await _context.Items.ToListAsync());
-            var i = await _unitOfWork.ItemRepository.AddItem(item);
+            // var i = await _unitOfWork.ItemRepository.AddItem(item);
+            _unitOfWork.ItemRepository.AddItem(item);
+            await _unitOfWork.SaveAsync();
+            var i = await _unitOfWork.ItemRepository.Get(item.ItemType);
             return Ok(i);
         }
 
@@ -107,10 +110,12 @@ namespace RankingApp.Controllers
             {
                 return BadRequest(result.Errors);
             }
-            var res = await _unitOfWork.ItemRepository.UpdateItem(i);
+            _unitOfWork.ItemRepository.UpdateItem(i);
+            await _unitOfWork.SaveAsync();
+
             // _context.Entry(i).State = EntityState.Modified;
             // await _context.SaveChangesAsync();
-            return Ok(res);
+            return Ok(i);
             // var a = _mapper.Map<ItemModel>(item);
             // return Ok(a);
             // return _mapper.Map<ItemModel>(item);
@@ -167,8 +172,10 @@ namespace RankingApp.Controllers
             // }
             // await _context.SaveChangesAsync();
             // return Ok(itemsToUpdate);
-            var result = await _unitOfWork.ItemRepository.Delete(itemType);
-            return Ok(result);
+            await _unitOfWork.ItemRepository.Delete(itemType);
+            await _unitOfWork.SaveAsync();
+            var res = await _unitOfWork.ItemRepository.Get(itemType);
+            return Ok(res);
             // return Ok(_itemRepository.Delete(itemType));
             // return Ok(_itemRepository.Delete(itemType));
 

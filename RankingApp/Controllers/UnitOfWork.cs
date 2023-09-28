@@ -34,9 +34,9 @@ namespace RankingApp.Controllers
         //     // throw new NotImplementedException();
         // }
 
-        public void Save()
+        public async Task SaveAsync()
         {
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
         }
 
     }

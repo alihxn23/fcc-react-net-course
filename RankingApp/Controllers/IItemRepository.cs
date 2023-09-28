@@ -12,8 +12,8 @@ namespace RankingApp.Controllers
         Task<List<ItemModel>> Get(int itemType);
 
         Task<ItemModel> GetObjectById(int objectId);
-        Task<List<ItemModel>> AddItem(ItemModel item);
-        Task<ItemModel> UpdateItem(ItemModel item);
-        Task<List<ItemModel>> Delete(int itemType);
+        void AddItem(ItemModel item);
+        void UpdateItem(ItemModel item);
+        Task Delete(int itemType);
     }
 }

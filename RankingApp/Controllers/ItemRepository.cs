@@ -15,22 +15,22 @@ namespace RankingApp.Controllers
         {
             _context = context;
         }
-        public async Task<List<ItemModel>> AddItem(ItemModel item)
+        public void AddItem(ItemModel item)
         {
             _context.Items.Add(item);
-            await _context.SaveChangesAsync();
-            return await _context.Items.ToListAsync();
+            // await _context.SaveChangesAsync();
+            // return await _context.Items.ToListAsync();
         }
 
-        public async Task<List<ItemModel>> Delete(int itemType)
+        public async Task Delete(int itemType)
         {
             var itemsToUpdate = await _context.Items.Where(f => f.ItemType == itemType).ToListAsync();
             foreach (var item in itemsToUpdate)
             {
                 item.Ranking = 0;
             }
-            await _context.SaveChangesAsync();
-            return itemsToUpdate;
+            // await _context.SaveChangesAsync();
+            // return itemsToUpdate;
         }
 
         public void Dispose()
@@ -50,7 +50,7 @@ namespace RankingApp.Controllers
             return i;
         }
 
-        public async Task<ItemModel> UpdateItem(ItemModel item)
+        public void UpdateItem(ItemModel item)
         {
             // throw new NotImplementedException();
             // var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == item.Id);
@@ -68,8 +68,8 @@ namespace RankingApp.Controllers
             //     return BadRequest(result.Errors);
             // }
             _context.Entry(item).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return item;
+            // await _context.SaveChangesAsync();
+            // return item;
             // return Ok(i);
         }
     }
