@@ -15,9 +15,11 @@ namespace RankingApp.Controllers
         {
             _context = context;
         }
-        public Task<ActionResult<ItemModel[]>> AddItem(ItemModel item)
+        public async Task<List<ItemModel>> AddItem(ItemModel item)
         {
-            throw new NotImplementedException();
+            _context.Items.Add(item);
+            await _context.SaveChangesAsync();
+            return await _context.Items.ToListAsync();
         }
 
         public async Task<List<ItemModel>> Delete(int itemType)
@@ -28,8 +30,6 @@ namespace RankingApp.Controllers
                 item.Ranking = 0;
             }
             await _context.SaveChangesAsync();
-            // return itemsToUpdate.ToList<ItemModel>();
-            // return Task.FromResult(itemsToUpdate);
             return itemsToUpdate;
         }
 
@@ -38,14 +38,39 @@ namespace RankingApp.Controllers
             throw new NotImplementedException();
         }
 
-        public Task<IActionResult> Get(int itemType)
+        public async Task<List<ItemModel>> Get(int itemType)
         {
-            throw new NotImplementedException();
+            var items = await _context.Items.Where(x => x.ItemType == itemType).ToListAsync();
+            return items;
         }
 
-        public Task<ActionResult<ItemModel>> UpdateItem(UpdateItemDto item)
+        public async Task<ItemModel> GetObjectById(int objectId)
         {
-            throw new NotImplementedException();
+            var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == objectId);
+            return i;
+        }
+
+        public async Task<ItemModel> UpdateItem(ItemModel item)
+        {
+            // throw new NotImplementedException();
+            // var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == item.Id);
+            // if(i == null){
+            //     return null;
+            // }
+            // // i.Ranking = item.Ranking;
+            // _mapper.Map<UpdateItemDto, ItemModel>(item, i);
+            // var validator = new ItemControllerValidator();
+            // ValidationResult result = validator.Validate(i);
+            // Console.WriteLine(i.Ranking);
+            // // return Ok(result);
+            // if (!result.IsValid)
+            // {
+            //     return BadRequest(result.Errors);
+            // }
+            _context.Entry(item).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return item;
+            // return Ok(i);
         }
     }
 }

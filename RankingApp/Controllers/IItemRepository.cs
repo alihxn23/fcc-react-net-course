@@ -9,9 +9,11 @@ namespace RankingApp.Controllers
 {
     public interface IItemRepository : IDisposable
     {
-        Task<IActionResult> Get(int itemType);
-        Task<ActionResult<ItemModel[]>> AddItem(ItemModel item);
-        Task<ActionResult<ItemModel>> UpdateItem(UpdateItemDto item);
+        Task<List<ItemModel>> Get(int itemType);
+
+        Task<ItemModel> GetObjectById(int objectId);
+        Task<List<ItemModel>> AddItem(ItemModel item);
+        Task<ItemModel> UpdateItem(ItemModel item);
         Task<List<ItemModel>> Delete(int itemType);
     }
 }

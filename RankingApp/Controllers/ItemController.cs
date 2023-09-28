@@ -57,28 +57,39 @@ namespace RankingApp.Controllers
         {
             //ItemModel[] items = Items.Where(i => i.ItemType == itemType).ToArray();
             //Thread.Sleep(2000);
-            var items = await _context.Items.Where(x => x.ItemType == itemType).ToListAsync();
+            var items = await _itemRepository.Get(itemType);
             if (items.Count == 0)
             {
                 return BadRequest("no data found");
             }
-            // return Ok(_mapper.Map<UpdateItemDto[]>(items));
             return Ok(items);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetObjectById([FromQuery] int objectId)
+        {
+            var i = await _itemRepository.GetObjectById(objectId);
+            return Ok(i);
+            // var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == objectId);
+            // return Ok(i);
         }
 
         [HttpPost]
         public async Task<ActionResult<ItemModel[]>> AddItem(ItemModel item)
         {
-            _context.Items.Add(item);
-            await _context.SaveChangesAsync();
+            // _context.Items.Add(item);
+            // await _context.SaveChangesAsync();
 
-            return Ok(await _context.Items.ToListAsync());
+            // return Ok(await _context.Items.ToListAsync());
+            var i = await _itemRepository.AddItem(item);
+            return Ok(i);
         }
 
         [HttpPut]
         public async Task<ActionResult<ItemModel>> UpdateItem(UpdateItemDto item)
         {
-            var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == item.Id);
+            var i = await _itemRepository.GetObjectById(item.Id);
+            // var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == item.Id);
             if (i == null)
             {
                 return BadRequest("item not found");
@@ -93,9 +104,10 @@ namespace RankingApp.Controllers
             {
                 return BadRequest(result.Errors);
             }
-            _context.Entry(i).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return Ok(i);
+            var res = await _itemRepository.UpdateItem(i);
+            // _context.Entry(i).State = EntityState.Modified;
+            // await _context.SaveChangesAsync();
+            return Ok(res);
             // var a = _mapper.Map<ItemModel>(item);
             // return Ok(a);
             // return _mapper.Map<ItemModel>(item);
