@@ -13,11 +13,13 @@ namespace RankingApp.Controllers
     {
         private readonly ItemContext _context;
         private readonly IMapper _mapper;
+        private IItemRepository _itemRepository;
 
-        public ItemController(ItemContext context, IMapper mapper)
+        public ItemController(ItemContext context, IMapper mapper, IItemRepository itemRepository)
         {
             _context = context;
             _mapper = mapper;
+            _itemRepository = itemRepository;
         }
 
         // public ItemController(IMapper mapper)
@@ -143,13 +145,17 @@ namespace RankingApp.Controllers
         [HttpDelete("{itemType:int}")]
         public async Task<ActionResult<ItemModel[]>> Delete(int itemType)
         {
-            var itemsToUpdate = await _context.Items.Where(f => f.ItemType == itemType).ToListAsync();
-            foreach (var item in itemsToUpdate)
-            {
-                item.Ranking = 0;
-            }
-            await _context.SaveChangesAsync();
-            return Ok(itemsToUpdate);
+            // var itemsToUpdate = await _context.Items.Where(f => f.ItemType == itemType).ToListAsync();
+            // foreach (var item in itemsToUpdate)
+            // {
+            //     item.Ranking = 0;
+            // }
+            // await _context.SaveChangesAsync();
+            // return Ok(itemsToUpdate);
+            var result = await _itemRepository.Delete(itemType);
+            return Ok(result);
+            // return Ok(_itemRepository.Delete(itemType));
+            // return Ok(_itemRepository.Delete(itemType));
 
             // var items = await _context.Items.Where(x => x.ItemType == itemType).ToListAsync();
             // if (items.Count == 0)
