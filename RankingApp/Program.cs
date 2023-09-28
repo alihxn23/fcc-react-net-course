@@ -14,6 +14,7 @@ builder.Services.AddScoped<IValidator<ItemModel>, ItemControllerValidator>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<UnitOfWork>();
 
 
 

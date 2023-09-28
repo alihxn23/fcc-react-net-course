@@ -11,15 +11,17 @@ namespace RankingApp.Controllers
 
     public class ItemController : ControllerBase
     {
-        private readonly ItemContext _context;
+        // private readonly ItemContext _context;
         private readonly IMapper _mapper;
-        private IItemRepository _itemRepository;
+        // private IItemRepository _itemRepository;
+        private UnitOfWork _unitOfWork;
 
-        public ItemController(ItemContext context, IMapper mapper, IItemRepository itemRepository)
+        public ItemController(IMapper mapper, UnitOfWork unitOfWork)
         {
-            _context = context;
+            // _context = context;
             _mapper = mapper;
-            _itemRepository = itemRepository;
+            // _itemRepository = itemRepository;
+            _unitOfWork = unitOfWork;
         }
 
         // public ItemController(IMapper mapper)
@@ -57,7 +59,7 @@ namespace RankingApp.Controllers
         {
             //ItemModel[] items = Items.Where(i => i.ItemType == itemType).ToArray();
             //Thread.Sleep(2000);
-            var items = await _itemRepository.Get(itemType);
+            var items = await _unitOfWork.ItemRepository.Get(itemType);
             if (items.Count == 0)
             {
                 return BadRequest("no data found");
@@ -68,7 +70,7 @@ namespace RankingApp.Controllers
         [HttpGet]
         public async Task<IActionResult> GetObjectById([FromQuery] int objectId)
         {
-            var i = await _itemRepository.GetObjectById(objectId);
+            var i = await _unitOfWork.ItemRepository.GetObjectById(objectId);
             return Ok(i);
             // var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == objectId);
             // return Ok(i);
@@ -81,14 +83,15 @@ namespace RankingApp.Controllers
             // await _context.SaveChangesAsync();
 
             // return Ok(await _context.Items.ToListAsync());
-            var i = await _itemRepository.AddItem(item);
+            var i = await _unitOfWork.ItemRepository.AddItem(item);
             return Ok(i);
         }
 
         [HttpPut]
         public async Task<ActionResult<ItemModel>> UpdateItem(UpdateItemDto item)
         {
-            var i = await _itemRepository.GetObjectById(item.Id);
+            var i = await _unitOfWork.ItemRepository.GetObjectById(item.Id);
+            Console.WriteLine(i);
             // var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == item.Id);
             if (i == null)
             {
@@ -104,7 +107,7 @@ namespace RankingApp.Controllers
             {
                 return BadRequest(result.Errors);
             }
-            var res = await _itemRepository.UpdateItem(i);
+            var res = await _unitOfWork.ItemRepository.UpdateItem(i);
             // _context.Entry(i).State = EntityState.Modified;
             // await _context.SaveChangesAsync();
             return Ok(res);
@@ -164,7 +167,7 @@ namespace RankingApp.Controllers
             // }
             // await _context.SaveChangesAsync();
             // return Ok(itemsToUpdate);
-            var result = await _itemRepository.Delete(itemType);
+            var result = await _unitOfWork.ItemRepository.Delete(itemType);
             return Ok(result);
             // return Ok(_itemRepository.Delete(itemType));
             // return Ok(_itemRepository.Delete(itemType));
