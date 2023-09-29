@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using FluentValidation.Results;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RankingApp.Models;
 
@@ -9,12 +11,23 @@ namespace RankingApp.Controllers
 
     public class ItemController : ControllerBase
     {
-        private readonly ItemContext _context;
+        // private readonly ItemContext _context;
+        private readonly IMapper _mapper;
+        // private IItemRepository _itemRepository;
+        private UnitOfWork _unitOfWork;
 
-        public ItemController(ItemContext context)
+        public ItemController(IMapper mapper, UnitOfWork unitOfWork)
         {
-            _context = context;
+            // _context = context;
+            _mapper = mapper;
+            // _itemRepository = itemRepository;
+            _unitOfWork = unitOfWork;
         }
+
+        // public ItemController(IMapper mapper)
+        // {
+        //     _mapper = mapper;
+        // }
 
         // private static readonly IEnumerable<ItemModel> Items = new[]
         // {
@@ -42,11 +55,11 @@ namespace RankingApp.Controllers
         // };
 
         [HttpGet("{itemType:int}")]
-        public async Task<ActionResult<ItemModel[]>> Get(int itemType)
+        public async Task<IActionResult> Get(int itemType)
         {
             //ItemModel[] items = Items.Where(i => i.ItemType == itemType).ToArray();
             //Thread.Sleep(2000);
-            var items = await _context.Items.Where(x => x.ItemType == itemType).ToListAsync();
+            var items = await _unitOfWork.ItemRepository.Get(itemType);
             if (items.Count == 0)
             {
                 return BadRequest("no data found");
@@ -54,19 +67,58 @@ namespace RankingApp.Controllers
             return Ok(items);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetObjectById([FromQuery] int objectId)
+        {
+            var i = await _unitOfWork.ItemRepository.GetObjectById(objectId);
+            return Ok(i);
+            // var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == objectId);
+            // return Ok(i);
+        }
+
         [HttpPost]
         public async Task<ActionResult<ItemModel[]>> AddItem(ItemModel item)
         {
-            _context.Items.Add(item);
-            await _context.SaveChangesAsync();
+            // _context.Items.Add(item);
+            // await _context.SaveChangesAsync();
 
-            return Ok(await _context.Items.ToListAsync());
+            // return Ok(await _context.Items.ToListAsync());
+            // var i = await _unitOfWork.ItemRepository.AddItem(item);
+            _unitOfWork.ItemRepository.AddItem(item);
+            await _unitOfWork.SaveAsync();
+            var i = await _unitOfWork.ItemRepository.Get(item.ItemType);
+            return Ok(i);
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<ItemModel>> UpdateItem(int id, ItemModel item)
+        [HttpPut]
+        public async Task<ActionResult<ItemModel>> UpdateItem(UpdateItemDto item)
         {
-            //var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == item.Id);
+            var i = await _unitOfWork.ItemRepository.GetObjectById(item.Id);
+            Console.WriteLine(i);
+            // var i = await _context.Items.FirstOrDefaultAsync(c => c.Id == item.Id);
+            if (i == null)
+            {
+                return BadRequest("item not found");
+            }
+            // i.Ranking = item.Ranking;
+            _mapper.Map<UpdateItemDto, ItemModel>(item, i);
+            var validator = new ItemControllerValidator();
+            ValidationResult result = validator.Validate(i);
+            Console.WriteLine(i.Ranking);
+            // return Ok(result);
+            if (!result.IsValid)
+            {
+                return BadRequest(result.Errors);
+            }
+            _unitOfWork.ItemRepository.UpdateItem(i);
+            await _unitOfWork.SaveAsync();
+
+            // _context.Entry(i).State = EntityState.Modified;
+            // await _context.SaveChangesAsync();
+            return Ok(i);
+            // var a = _mapper.Map<ItemModel>(item);
+            // return Ok(a);
+            // return _mapper.Map<ItemModel>(item);
 
             //if(i == null)
             //{
@@ -84,42 +136,48 @@ namespace RankingApp.Controllers
             //return Ok(changedItem);
 
 
-            if (id != item.Id)
-            {
-                return BadRequest();
-            }
+            // if (id != item.Id)
+            // {
+            //     return BadRequest();
+            // }
 
-            _context.Entry(item).State = EntityState.Modified;
+            // _context.Entry(item).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!(_context.Items?.Any(e => e.Id == id)).GetValueOrDefault())
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            // try
+            // {
+            //     await _context.SaveChangesAsync();
+            // }
+            // catch (DbUpdateConcurrencyException)
+            // {
+            //     if (!(_context.Items?.Any(e => e.Id == id)).GetValueOrDefault())
+            //     {
+            //         return NotFound();
+            //     }
+            //     else
+            //     {
+            //         throw;
+            //     }
+            // }
 
-            return item;
+            // return item;
         }
 
         [HttpDelete("{itemType:int}")]
         public async Task<ActionResult<ItemModel[]>> Delete(int itemType)
         {
-            var itemsToUpdate = await _context.Items.Where(f => f.ItemType == itemType).ToListAsync();
-            foreach (var item in itemsToUpdate)
-            {
-                item.Ranking = 0;
-            }
-            await _context.SaveChangesAsync();
-            return Ok(itemsToUpdate);
+            // var itemsToUpdate = await _context.Items.Where(f => f.ItemType == itemType).ToListAsync();
+            // foreach (var item in itemsToUpdate)
+            // {
+            //     item.Ranking = 0;
+            // }
+            // await _context.SaveChangesAsync();
+            // return Ok(itemsToUpdate);
+            await _unitOfWork.ItemRepository.Delete(itemType);
+            await _unitOfWork.SaveAsync();
+            var res = await _unitOfWork.ItemRepository.Get(itemType);
+            return Ok(res);
+            // return Ok(_itemRepository.Delete(itemType));
+            // return Ok(_itemRepository.Delete(itemType));
 
             // var items = await _context.Items.Where(x => x.ItemType == itemType).ToListAsync();
             // if (items.Count == 0)

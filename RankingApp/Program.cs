@@ -1,12 +1,24 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.EntityFrameworkCore;
+using RankingApp.Controllers;
+using RankingApp.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
+// .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<ItemControllerValidator>());
+builder.Services.AddScoped<IValidator<ItemModel>, ItemControllerValidator>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IItemRepository, ItemRepository>();
+builder.Services.AddScoped<UnitOfWork>();
+
+
+
+builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddDbContext<RankingApp.ItemContext>(options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
